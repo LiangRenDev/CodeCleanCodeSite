@@ -5,7 +5,6 @@
 // Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
-  initCounterAnimations();
   initSmoothScroll();
   initNavScroll();
   initFormHandling();
@@ -182,6 +181,8 @@ function initFormHandling() {
     
     // Send form data to Cloudflare Worker
     try {
+      console.log('Submitting form data:', formData);
+      
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
@@ -190,7 +191,17 @@ function initFormHandling() {
         body: JSON.stringify(formData)
       });
       
+      console.log('Response status:', response.status);
+      
+      // Check if response is ok
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response error:', errorText);
+        throw new Error(`Server error: ${response.status}`);
+      }
+      
       const result = await response.json();
+      console.log('Response data:', result);
       
       if (result.success) {
         // Success state
