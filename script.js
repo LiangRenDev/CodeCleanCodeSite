@@ -180,28 +180,42 @@ function initFormHandling() {
       message: form.message.value
     };
     
-    // Simulate form submission (replace with actual API call)
+    // Send form data to Cloudflare Worker
     try {
-      await simulateFormSubmission(formData);
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
       
-      // Success state
-      submitBtn.innerHTML = '<span>✓ Message Sent!</span>';
-      submitBtn.style.background = 'var(--color-primary)';
+      const result = await response.json();
       
-      // Reset form
-      form.reset();
-      
-      // Reset button after 3 seconds
-      setTimeout(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        submitBtn.style.background = '';
-      }, 3000);
-      
-      // Show success notification
-      showNotification('Thank you! We\'ll get back to you soon.', 'success');
+      if (result.success) {
+        // Success state
+        submitBtn.innerHTML = '<span>✓ Message Sent!</span>';
+        submitBtn.style.background = 'var(--color-primary)';
+        
+        // Reset form
+        form.reset();
+        
+        // Reset button after 3 seconds
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+          submitBtn.style.background = '';
+        }, 3000);
+        
+        // Show success notification
+        showNotification('Thank you! We\'ll get back to you soon.', 'success');
+      } else {
+        throw new Error(result.error || 'Failed to send message');
+      }
       
     } catch (error) {
+      console.error('Form submission error:', error);
+      
       // Error state
       submitBtn.innerHTML = '<span>✗ Failed to Send</span>';
       submitBtn.style.background = 'var(--color-danger)';
@@ -226,22 +240,6 @@ function initFormHandling() {
     input.addEventListener('blur', () => {
       input.parentElement.classList.remove('focused');
     });
-  });
-}
-
-// Simulate form submission (replace with actual API call)
-function simulateFormSubmission(data) {
-  return new Promise((resolve, reject) => {
-    console.log('Form data:', data);
-    
-    // Simulate network delay
-    setTimeout(() => {
-      // Simulate successful submission
-      resolve({ success: true });
-      
-      // Uncomment to simulate error:
-      // reject(new Error('Submission failed'));
-    }, 1500);
   });
 }
 
