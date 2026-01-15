@@ -46,7 +46,7 @@ export async function onRequestPost(context) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'CodeCleanCode Contact Form <onboarding@resend.dev>', // Change this after domain verification
+        from: 'CodeCleanCode Contact Form <noreply@codecleancode.com>',
         to: env.CONTACT_EMAIL || 'admin@codecleancode.com',
         reply_to: email,
         subject: `New Contact Form Submission from ${name}`,
