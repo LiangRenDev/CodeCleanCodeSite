@@ -359,6 +359,26 @@
         </div>
     </footer>
 
+    <!-- Page Agent - AI Assistant -->
+    <script src="https://cdn.jsdelivr.net/npm/page-agent@1.5.7/dist/iife/page-agent.demo.js" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pageAgentConfig = {
+                model: 'minimax-portal/MiniMax-M2.5',
+                baseURL: 'https://6b79-16-176-154-194.ngrok-free.app/v1',
+                apiKey: 'placeholder', // Required but not used for local/custom endpoints
+                language: 'en-US',
+            };
+
+            try {
+                const agent = new PageAgent(pageAgentConfig);
+                console.log('Page Agent initialized successfully');
+            } catch (error) {
+                console.error('Failed to initialize Page Agent:', error);
+            }
+        });
+    </script>
+
     <script src="script.js"></script>
 </body>
 </html>
