@@ -359,6 +359,38 @@
         </div>
     </footer>
 
+    <!-- Chatbot Widget -->
+    <div class="chatbot-widget" id="chatbotWidget">
+        <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+        </button>
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <span>AI Assistant</span>
+                <button class="chatbot-close" id="chatbotClose" aria-label="Close chat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="chatbot-message bot">
+                    <div class="message-content">Hello! I'm Leo's AI assistant. How can I help you today?</div>
+                </div>
+            </div>
+            <form class="chatbot-input" id="chatbotForm">
+                <input type="text" id="chatbotInput" placeholder="Type a message..." autocomplete="off">
+                <button type="submit" aria-label="Send message">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Page Agent - AI Assistant -->
     <script src="https://cdn.jsdelivr.net/npm/page-agent@1.5.7/dist/iife/page-agent.demo.js" crossorigin="anonymous"></script>
     <script>

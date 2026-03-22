@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavScroll();
   initFormHandling();
   setCurrentYear();
+  initChatbot();
 });
 
 // Scroll Animations using Intersection Observer
@@ -496,7 +497,137 @@ function setCurrentYear() {
 // Set current year in footer on page load
 setCurrentYear();
 
-// 
+// ===================================
+// Chatbot
+// ===================================
+const CHATBOT_CONFIG = {
+  baseURL: 'https://6b79-16-176-154-194.ngrok-free.app/v1',
+  model: 'minimax-portal/MiniMax-M2.5',
+};
+
+let chatHistory = [];
+
+function initChatbot() {
+  const widget = document.getElementById('chatbotWidget');
+  const toggle = document.getElementById('chatbotToggle');
+  const window = document.getElementById('chatbotWindow');
+  const close = document.getElementById('chatbotClose');
+  const form = document.getElementById('chatbotForm');
+  const input = document.getElementById('chatbotInput');
+
+  if (!widget || !toggle || !window || !form) return;
+
+  // Check if first visit - only auto-open on first load
+  const hasVisited = localStorage.getItem('chatbot_visited');
+
+  if (!hasVisited) {
+    // First visit - open chatbot and show welcome message
+    localStorage.setItem('chatbot_visited', 'true');
+    window.classList.add('open');
+    input.focus();
+  }
+
+  // Toggle chat window
+  toggle.addEventListener('click', () => {
+    window.classList.toggle('open');
+    if (window.classList.contains('open')) {
+      input.focus();
+    }
+  });
+
+  close.addEventListener('click', () => {
+    window.classList.remove('open');
+  });
+
+  // Handle form submission
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = input.value.trim();
+    if (!message) return;
+
+    // Add user message
+    addMessage(message, 'user');
+    input.value = '';
+
+    // Show typing indicator
+    showTypingIndicator();
+
+    try {
+      const response = await sendToLLM(message);
+      removeTypingIndicator();
+      addMessage(response, 'bot');
+    } catch (error) {
+      removeTypingIndicator();
+      addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+      console.error('Chatbot error:', error);
+    }
+  });
+}
+
+function addMessage(content, sender) {
+  const messagesContainer = document.getElementById('chatbotMessages');
+  if (!messagesContainer) return;
+
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `chatbot-message ${sender}`;
+  messageDiv.innerHTML = `<div class="message-content">${escapeHtml(content)}</div>`;
+
+  messagesContainer.appendChild(messageDiv);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function showTypingIndicator() {
+  const messagesContainer = document.getElementById('chatbotMessages');
+  if (!messagesContainer) return;
+
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'chatbot-message bot typing';
+  typingDiv.id = 'typingIndicator';
+  typingDiv.innerHTML = `<div class="message-content"></div>`;
+
+  messagesContainer.appendChild(typingDiv);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function removeTypingIndicator() {
+  const typing = document.getElementById('typingIndicator');
+  if (typing) typing.remove();
+}
+
+async function sendToLLM(message) {
+  chatHistory.push({ role: 'user', content: message });
+
+  const response = await fetch(`${CHATBOT_CONFIG.baseURL}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: CHATBOT_CONFIG.model,
+      messages: chatHistory,
+      max_tokens: 500,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  const botMessage = data.choices?.[0]?.message?.content || 'No response received.';
+
+  chatHistory.push({ role: 'assistant', content: botMessage });
+
+  return botMessage;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+//
 // Log initialization
 console.log('%c CodeCleanCode ', 'background: #00ff88; color: #0a0e27; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
 console.log('%c Website initialized successfully ', 'color: #00ff88; font-weight: bold;');
