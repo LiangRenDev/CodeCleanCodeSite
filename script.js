@@ -501,7 +501,8 @@ setCurrentYear();
 // Chatbot
 // ===================================
 const CHATBOT_CONFIG = {
-  baseURL: 'https://6b79-16-176-154-194.ngrok-free.app/v1',
+  // Use /api/chat for both local and production (Cloudflare handles CORS)
+  apiEndpoint: '/api/chat',
   model: 'minimax-portal/MiniMax-M2.5',
 };
 
@@ -597,7 +598,7 @@ function removeTypingIndicator() {
 async function sendToLLM(message) {
   chatHistory.push({ role: 'user', content: message });
 
-  const response = await fetch(`${CHATBOT_CONFIG.baseURL}/chat/completions`, {
+  const response = await fetch(CHATBOT_CONFIG.apiEndpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
