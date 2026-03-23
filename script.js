@@ -501,7 +501,7 @@ setCurrentYear();
 // Chatbot
 // ===================================
 const CHATBOT_CONFIG = {
-  // Use local API endpoint (Cloudflare Function proxies to custom LLM)
+  // Use /api/chat for both local and production (Cloudflare handles CORS)
   apiEndpoint: '/api/chat',
   model: 'minimax-portal/MiniMax-M2.5',
 };
