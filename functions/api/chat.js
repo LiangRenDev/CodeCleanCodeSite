@@ -10,8 +10,20 @@ export async function onRequestPost(context) {
 
     // Use ngrok URL - can be overridden with env variable
     const NGROK_URL = env.LLM_API_BASE || 'https://6b79-16-176-154-194.ngrok-free.app/v1';
-    const API_KEY = env.LLM_API_KEY || 'd6fdf6aaafe80e094dd62b9cf328594f1f56ce359c327b2a';
+    const API_KEY = env.LLM_API_KEY; // Set in Cloudflare Pages environment variables
     const MODEL = body.model || 'minimax-portal/MiniMax-M2.5';
+
+    if (!API_KEY) {
+      return new Response(JSON.stringify({
+        error: 'API key not configured'
+      }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
 
     // Forward to ngrok LLM endpoint
     const llmResponse = await fetch(`${NGROK_URL}/chat/completions`, {
