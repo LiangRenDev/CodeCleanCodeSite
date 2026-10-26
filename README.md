@@ -110,5 +110,5 @@ Design notes live in [.github/instructions/FRONTEND_GUIDELINES.md](.github/instr
 | `npm run build` | Write the static site to `dist/` |
 | `npm run dev` | Local Worker and site |
 | `npm run deploy` | Build, then `wrangler deploy` |
-| `npm test` | Validation tests |
+| `npm test` | Validation tests and UI behaviour tests |
 | `npm run check` | Regenerate Worker types and typecheck |
