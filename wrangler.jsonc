@@ -1,0 +1,48 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "codecleancode",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-26",
+  "compatibility_flags": ["nodejs_compat"],
+  "upload_source_maps": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    // API routes hit the Worker. Everything else is a static file in dist/.
+    "run_worker_first": ["/api/*"]
+  },
+  "vars": {
+    "CONTACT_EMAIL": "admin@codecleancode.com",
+    "CONTACT_FROM": "CodeCleanCode Contact Form <noreply@codecleancode.com>",
+    // Leave blank until an assistant endpoint exists. The chat widget stays up
+    // and tells visitors it is not connected.
+    "LLM_API_BASE": "",
+    "LLM_MODEL": ""
+  },
+  "secrets": {
+    "required": ["RESEND_API_KEY", "LLM_API_KEY"]
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    }
+  }
+  // Login is the next task. Add D1 only after `wrangler d1 create codecleancode`
+  // prints a database id. A binding with no id can provision a database on deploy.
+  // "d1_databases": [
+  //   {
+  //     "binding": "DB",
+  //     "database_name": "codecleancode",
+  //     "database_id": "<database-id-from-wrangler-d1-create>",
+  //     "migrations_dir": "migrations"
+  //   }
+  // ]
+}

@@ -1,146 +1,114 @@
-# CodeCleanCode - Company Website
+# CodeCleanCode
 
-AI-powered, secure, and resilient solutions for modern enterprises.
+Company site for CodeCleanCode: AI-powered applications, security architecture, and resilient infrastructure.
 
-## 🌐 Live Site
+The public site is a static page. A Cloudflare Worker serves it and owns `/api/*`, so a later login backend can be added in the same Worker with a D1 binding. Login is not built yet.
 
-- **Production:** [https://codecleancode.com](https://codecleancode.com) *(coming soon)*
-- **Preview:** [https://codecleancode.pages.dev](https://codecleancode.pages.dev)
+## Live site
 
-## ✨ Features
+- Production: [https://codecleancode.com](https://codecleancode.com) (coming soon)
+- Preview host: deploy with the owner's Cloudflare account
 
-- **Technical-Futuristic Design**: Cyber-inspired aesthetic with dark theme and electric accents
-- **Distinctive Typography**: Orbitron display font paired with JetBrains Mono monospace
-- **Animated Terminal**: Interactive code terminal showcasing AI system initialization
-- **Scroll Animations**: Smooth reveal effects using Intersection Observer API
-- **Working Contact Form**: Powered by Resend + Cloudflare Workers
-- **Responsive Design**: Mobile-first approach with breakpoints for all devices
-- **Accessible**: WCAG AA compliant with proper semantic HTML and ARIA labels
-- **Performance Optimized**: CSS animations, efficient JavaScript, reduced motion support
+## Develop
 
-## 🚀 Quick Start
-
-### View Locally
 ```bash
-# Clone the repository
-git clone YOUR_REPO_URL
-cd CompanyWebsite
-
-# Open in browser
-open index.html
-# or use a local server
-python -m http.server 8000
+npm install
+npm test
+npm run check
+npm run dev
 ```
 
-### Deploy to Cloudflare Pages
-See [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment instructions.
+`npm run dev` starts Wrangler. The site is at the local URL Wrangler prints (usually http://localhost:8787).
 
-## 📁 Project Structure
+Copy `.env.example` to `.dev.vars` before trying the contact form locally. Do not commit `.dev.vars`.
 
-```
-CompanyWebsite/
-├── index.html              # Main HTML structure
-├── styles.css              # Complete styling with CSS variables
-├── script.js               # Interactive features and animations
-├── functions/
-│   └── api/
-│       └── contact.js      # Cloudflare Function for contact form
-├── DEPLOYMENT.md           # Deployment guide
-├── FRONTEND_GUIDELINES.md  # Design system reference
-└── README.md              # This file
-```
+## Build and deploy
 
-## 🛠 Technologies
+Build output directory: **`dist/`**
 
-- **HTML5**: Semantic markup
-- **CSS3**: Custom properties, Grid, Flexbox, animations
-- **JavaScript**: Vanilla ES6+
-- **Cloudflare Pages**: Hosting & CDN
-- **Cloudflare Functions**: Serverless API
-- **Resend**: Email delivery
-- **Google Fonts**: Orbitron, JetBrains Mono
-
-## 🎨 Design System
-
-### Colors
-- Background: `#0a0e27` (Dark space blue)
-- Primary: `#00ff88` (Neon green)
-- Secondary: `#0ea5e9` (Electric blue)
-- Accent: `#8b5cf6` (Purple)
-
-### Typography
-- Display: Orbitron (700, 900)
-- Body: JetBrains Mono (400, 500, 700)
-
-### Aesthetic
-Technical-Futuristic Cyber - Dark theme with terminal interfaces, grid patterns, glowing effects, and gradient animations.
-
-## 📧 Contact Form Setup
-
-The contact form uses Resend for email delivery via Cloudflare Functions.
-
-### Environment Variables Required:
 ```bash
-RESEND_API_KEY=your_api_key_here
-CONTACT_EMAIL=admin@codecleancode.com
+npm install
+npm run build
+npm run deploy
 ```
 
-### Setup Instructions:
-1. Create a [Resend account](https://resend.com)
-2. Get your API key from the dashboard
-3. Add environment variables in Cloudflare Pages settings
-4. Deploy!
+`npm run build` copies `public/` to `dist/`.
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed setup.
+`npm run deploy` runs that build, then `wrangler deploy`. It publishes the Worker and the static assets together. Run it with the owner's Cloudflare account. This repository does not deploy itself.
 
-## 📊 Performance
+Set secrets before the contact form or assistant can send anything:
 
-- **Lighthouse Score**: 95+ across all metrics
-- **Load Time**: < 1s on 4G
-- **First Contentful Paint**: < 0.5s
-- **Time to Interactive**: < 1s
+```bash
+npx wrangler secret put RESEND_API_KEY
+npx wrangler secret put LLM_API_KEY
+```
 
-## ♿ Accessibility
+`LLM_API_KEY` can be any placeholder until an assistant endpoint exists. The chat widget stays on the page and tells visitors the assistant is not connected when `LLM_API_BASE` or `LLM_MODEL` is empty.
 
-- Semantic HTML5 elements
-- ARIA labels for interactive elements
-- Keyboard navigation support
-- High contrast ratios (WCAG AA)
-- Reduced motion support
-- Focus visible states
+See [DEPLOYMENT.md](DEPLOYMENT.md) for Resend, the custom domain, and the D1 step for login.
 
-## 🔒 Security
+## Pages
 
-- Environment variables for sensitive data
-- CORS properly configured
-- Input validation and sanitization
-- Rate limiting ready (can be enabled)
-- XSS protection
---font-display: 'Orbitron', monospace;
-- XSS protection
+Single marketing page, plus a 404 page:
 
-## 📱 Browser Support
+| Section | What it covers |
+| --- | --- |
+| Home | Headline, calls to action, uptime / support / encryption figures, terminal |
+| Services | AI-powered applications, security architecture, resilient infrastructure |
+| About | Philosophy and three principles |
+| Contact | Email link and contact form (`POST /api/contact`) |
+| Assistant | Chat widget (`POST /api/chat`), off until configured |
+| 404 | Unknown paths |
 
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+## Placeholders to fill in
 
-## 🤝 Contributing
+These are marked on the page or left blank on purpose. Nothing here is a real profile, price, client, or testimonial.
 
-This is a company website. For inquiries: [admin@codecleancode.com](mailto:admin@codecleancode.com)
+- Footer: `GitHub — add link`, `LinkedIn — add link`, `X — add link`
+- Footer: `Careers — not listed yet`
+- Inbox: `admin@codecleancode.com` (already used in this repo; confirm it is the right address)
+- Sender: `CONTACT_FROM` in `wrangler.jsonc` must be a verified Resend domain before mail delivers
+- Assistant: `LLM_API_BASE`, `LLM_MODEL`, and secret `LLM_API_KEY`
+- Login database: the commented `d1_databases` block in `wrangler.jsonc`
 
-## 📝 License
+## Architecture
 
-© 2026 CodeCleanCode. All rights reserved.
+```
+public/                 Source for the static site
+dist/                   Build output deployed as Workers static assets
+src/index.ts            Worker entry. Routes /api/*, then falls through to assets
+src/routes/contact.ts   Contact form → Resend
+src/routes/chat.ts      Optional assistant proxy
+wrangler.jsonc          Worker, assets, vars, and the future D1 binding
+```
 
-## 🔗 Links
+`/api/*` runs the Worker first. Every other path is a file in `dist/`. Unknown paths serve `404.html`.
 
-- [Design Guidelines](FRONTEND_GUIDELINES.md)
-- [Deployment Guide](DEPLOYMENT.md)
-- [Cloudflare Pages](https://pages.cloudflare.com)
-- [Resend](https://resend.com)
+### Adding login later
 
----
+1. Create the database: `npx wrangler d1 create codecleancode`
+2. Paste the printed `database_id` into the commented `d1_databases` block in `wrangler.jsonc`. The binding name to use is `DB`.
+3. Add SQL under `migrations/` and apply it with `npx wrangler d1 migrations apply DB --remote`.
+4. Add a route module next to `src/routes/contact.ts` and register it in `src/index.ts`.
+5. Run `npm run types` so `Env` picks up `DB`. Do not hand-write the `Env` interface.
 
-**Built with precision. Powered by AI. Secured by design.**
+Do not uncomment the D1 binding before the id exists. A binding without an id can provision a database on deploy.
+
+## Stack
+
+- HTML, CSS, and JavaScript in `public/`
+- Cloudflare Workers static assets
+- Worker API for the contact form (Resend) and the optional assistant
+- Fonts: Orbitron and JetBrains Mono
+
+Design notes live in [.github/instructions/FRONTEND_GUIDELINES.md](.github/instructions/FRONTEND_GUIDELINES.md).
+
+## Scripts
+
+| Script | Purpose |
+| --- | --- |
+| `npm run build` | Write the static site to `dist/` |
+| `npm run dev` | Local Worker and site |
+| `npm run deploy` | Build, then `wrangler deploy` |
+| `npm test` | Validation tests |
+| `npm run check` | Regenerate Worker types and typecheck |
