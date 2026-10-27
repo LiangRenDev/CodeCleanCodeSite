@@ -1,0 +1,24 @@
+{
+  "name": "codecleancode",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CodeCleanCode company website, deployed as a Cloudflare Worker with static assets.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "check": "wrangler types --include-runtime false && tsc --noEmit",
+    "test": "node --experimental-strip-types --test \"test/**/*.test.ts\"",
+    "types": "wrangler types --include-runtime false"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "happy-dom": "^21.0.4",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.153.0"
+  }
+}
